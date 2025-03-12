@@ -4,22 +4,22 @@ import (
 	"log"
 	"net"
 
-	"github.com/tanmaygupta069/auth-service/config"
-	"github.com/tanmaygupta069/auth-service/internal/auth"
+	"github.com/tanmaygupta069/auth-service-go/config"
+	pb "github.com/tanmaygupta069/auth-service-go/generated"
+	"github.com/tanmaygupta069/auth-service-go/internal/auth"
 	"google.golang.org/grpc"
-	pb "github.com/tanmaygupta069/auth-service/generated"
-	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/reflection"
 )
 
-func main(){
-	cfg,err := config.GetConfig()
-	if err!=nil{
-		log.Printf("error: %v",err.Error());
+func main() {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		log.Printf("error: %v", err.Error())
 	}
 	// router:=router.GetRouter()
 	// router.Run(":"+cfg.ServerConfig.Port)
-	sayHelloController:=auth.NewAuthController()
+	sayHelloController := auth.NewAuthController()
 	creds, err := credentials.NewServerTLSFromFile("cert.pem", "key.pem")
 	if err != nil {
 		log.Fatalf("Failed to load TLS keys: %v", err)
@@ -33,7 +33,7 @@ func main(){
 	pb.RegisterAuthServiceServer(grpcServer, sayHelloController)
 	reflection.Register(grpcServer)
 
-	log.Printf("gRPC server is running on port %s",cfg.GrpcServerConfig.Port)
+	log.Printf("gRPC server is running on port %s", cfg.GrpcServerConfig.Port)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

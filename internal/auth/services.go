@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/tanmaygupta069/auth-service/config"
+	"github.com/tanmaygupta069/auth-service-go/config"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var cfg,_ = config.GetConfig()
+var cfg, _ = config.GetConfig()
 
 type Claims struct {
 	Email string `json:"email"`

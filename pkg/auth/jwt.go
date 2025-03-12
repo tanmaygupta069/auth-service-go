@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/tanmaygupta069/auth-service/config"
+	"github.com/tanmaygupta069/auth-service-go/config"
 )
 
-var cfg,_ = config.GetConfig()
+var cfg, _ = config.GetConfig()
 
 var jwtSecret = []byte(cfg.ServerConfig.JwtSecret)
 
@@ -17,16 +17,16 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(email string)(string,error){
+func GenerateToken(email string) (string, error) {
 	expirationTime := time.Now().Add(time.Hour)
-	claims:=&Claims{
+	claims := &Claims{
 		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
-	token:=jwt.NewWithClaims(jwt.SigningMethodHS256,claims)
-	return token.SignedString(jwtSecret) 
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(jwtSecret)
 }
 
 func ValidateToken(tokenString string) (*Claims, error) {
@@ -41,4 +41,3 @@ func ValidateToken(tokenString string) (*Claims, error) {
 
 	return claims, nil
 }
-

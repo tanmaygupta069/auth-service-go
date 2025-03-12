@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/tanmaygupta069/auth-service/config"
+	"github.com/tanmaygupta069/auth-service-go/config"
 )
 
 var db *gorm.DB
@@ -18,7 +18,7 @@ var once sync.Once
 type SqlInterface interface {
 	Insert(user *User) error
 	Delete(email string) error
-	GetOne(key string,value string) (*User, error)
+	GetOne(key string, value string) (*User, error)
 	GetAll() ([]User, error)
 }
 
@@ -70,9 +70,9 @@ func GetSqlClient() *gorm.DB {
 	return db
 }
 
-func (s *SqlServiceImplementation) GetOne(key string,value string) (*User, error) {
+func (s *SqlServiceImplementation) GetOne(key string, value string) (*User, error) {
 	var user User
-	err := db.Where(fmt.Sprintf("%s = ?", value),key).First(&user).Error
+	err := db.Where(fmt.Sprintf("%s = ?", value), key).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

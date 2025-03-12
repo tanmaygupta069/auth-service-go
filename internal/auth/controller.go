@@ -4,151 +4,150 @@ import (
 	"context"
 	"net/http"
 
-	pb "github.com/tanmaygupta069/auth-service/generated"
-	"github.com/tanmaygupta069/auth-service/pkg/auth"
+	pb "github.com/tanmaygupta069/auth-service-go/generated"
+	"github.com/tanmaygupta069/auth-service-go/pkg/auth"
 )
 
-type AuthController struct{
+type AuthController struct {
 	pb.UnimplementedAuthServiceServer
 	service AuthService
 }
 
-func NewAuthController()*AuthController{
+func NewAuthController() *AuthController {
 	return &AuthController{
 		service: NewAuthService(),
-		}
+	}
 }
 
-func(s *AuthController)Login(ctx context.Context,req *pb.LoginRequest)(*pb.LoginResponse, error){
-	if req.Email == "" ||  req.Password == "" {
+func (s *AuthController) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+	if req.Email == "" || req.Password == "" {
 		return &pb.LoginResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "email and password are required fields",
 			},
 			Token: "",
-		},nil
+		}, nil
 	}
 
 	if !IsValidEmail(req.Email) {
 		return &pb.LoginResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "enter a valid email",
 			},
 			Token: "",
-		},nil
+		}, nil
 	}
 
 	if !s.service.UserRegistered(req.Email) {
 		return &pb.LoginResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "invalid email or password",
 			},
 			Token: "",
-		},nil
+		}, nil
 	}
 
 	hashedPassword, err := s.service.GetHashedPassword(req.Email)
 	if err != nil {
 		return &pb.LoginResponse{
 			Response: &pb.Response{
-				Code: http.StatusInternalServerError,
+				Code:    http.StatusInternalServerError,
 				Message: "error in hashing password",
 			},
 			Token: "",
-		},nil
+		}, nil
 	}
 	if !s.service.CheckPassword(req.Password, hashedPassword) {
 		return &pb.LoginResponse{
 			Response: &pb.Response{
-				Code: http.StatusUnauthorized,
+				Code:    http.StatusUnauthorized,
 				Message: "incorrect password",
 			},
 			Token: "",
-		},nil
+		}, nil
 	}
 	token, err := auth.GenerateToken(req.Email)
 	if err != nil {
 		return &pb.LoginResponse{
 			Response: &pb.Response{
-				Code: http.StatusInternalServerError,
+				Code:    http.StatusInternalServerError,
 				Message: "error in generating token",
 			},
 			Token: "",
-		},nil
+		}, nil
 	}
 
 	return &pb.LoginResponse{
 		Response: &pb.Response{
-			Code: http.StatusOK,
+			Code:    http.StatusOK,
 			Message: http.StatusText(http.StatusOK),
 		},
 		Token: token,
-	},nil
+	}, nil
 }
 
-func(s *AuthController)Signup(ctx context.Context, req *pb.SignupRequest)(*pb.SignupResponse, error){
-	if req.Email == "" ||  req.Password == "" {
+func (s *AuthController) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.SignupResponse, error) {
+	if req.Email == "" || req.Password == "" {
 		return &pb.SignupResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "email and password are required fields",
 			},
-		},nil
+		}, nil
 	}
 
 	if !IsValidEmail(req.Email) {
 		return &pb.SignupResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "enter a valid email",
 			},
-		},nil
+		}, nil
 	}
 
 	if !IsValidPassword(req.Password) {
 		return &pb.SignupResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "password must be greater than 8 letters",
 			},
-		},nil
+		}, nil
 	}
 
 	if s.service.UserRegistered(req.Email) {
 		return &pb.SignupResponse{
 			Response: &pb.Response{
-				Code: http.StatusBadRequest,
+				Code:    http.StatusBadRequest,
 				Message: "user already registered login",
 			},
-		},nil
+		}, nil
 	}
 
 	hashedPassword, err := s.service.HashPassword(req.Password)
 	if err != nil {
 		return &pb.SignupResponse{
 			Response: &pb.Response{
-				Code: http.StatusInternalServerError,
+				Code:    http.StatusInternalServerError,
 				Message: "error in hashing password",
 			},
-		},nil
+		}, nil
 	}
 	if err := s.service.RegisterUser(req.Email, hashedPassword); err != nil {
 		return &pb.SignupResponse{
 			Response: &pb.Response{
-				Code: http.StatusInternalServerError,
+				Code:    http.StatusInternalServerError,
 				Message: "error in registering user",
 			},
-		},nil
+		}, nil
 	}
 
 	return &pb.SignupResponse{
 		Response: &pb.Response{
-			Code: http.StatusOK,
+			Code:    http.StatusOK,
 			Message: "user registered",
 		},
-	},nil
+	}, nil
 }
-

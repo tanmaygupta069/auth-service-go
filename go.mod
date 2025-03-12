@@ -1,4 +1,4 @@
-module github.com/tanmaygupta069/auth-service
+module github.com/tanmaygupta069/auth-service-go
 
 go 1.24.1
 
