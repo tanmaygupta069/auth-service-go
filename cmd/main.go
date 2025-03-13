@@ -8,7 +8,7 @@ import (
 	pb "github.com/tanmaygupta069/auth-service-go/generated"
 	"github.com/tanmaygupta069/auth-service-go/internal/auth"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	// "google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -20,16 +20,16 @@ func main() {
 	// router:=router.GetRouter()
 	// router.Run(":"+cfg.ServerConfig.Port)
 	sayHelloController := auth.NewAuthController()
-	creds, err := credentials.NewServerTLSFromFile("cert.pem", "key.pem")
+	// _, err := credentials.NewServerTLSFromFile("cert.pem", "key.pem")
 	if err != nil {
 		log.Fatalf("Failed to load TLS keys: %v", err)
 	}
-	listener, err := net.Listen("tcp", ":"+cfg.GrpcServerConfig.Port)
+	listener, err := net.Listen("tcp4",":"+cfg.GrpcServerConfig.Port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
+	grpcServer := grpc.NewServer()
 	pb.RegisterAuthServiceServer(grpcServer, sayHelloController)
 	reflection.Register(grpcServer)
 
