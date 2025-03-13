@@ -7,7 +7,7 @@ option go_package = "./";
 service authService {
     rpc Login(LoginRequest)returns(LoginResponse);
     rpc Signup(SignupRequest)returns(SignupResponse);
-    rpc VaidateToken(ValidateTokenRequest)returns(ValidateTokenResponse);
+    rpc ValidateToken(ValidateTokenRequest)returns(ValidateTokenResponse);
 }
 
 message LoginRequest{
@@ -17,7 +17,7 @@ message LoginRequest{
 
 message LoginResponse{
     Response response = 1;
-    string token = 3;
+    string token = 2;
 }
 
 message SignupRequest{

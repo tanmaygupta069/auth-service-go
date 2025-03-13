@@ -1,5 +1,4 @@
 GO_PROTO_PATH := ./generated
-
 compile_go_protos:
 	mkdir -p $(GO_PROTO_PATH)
 	protoc \
