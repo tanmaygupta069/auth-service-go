@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	pb "github.com/tanmaygupta069/auth-service-go/generated"
@@ -150,4 +151,34 @@ func (s *AuthController) Signup(ctx context.Context, req *pb.SignupRequest) (*pb
 			Message: "user registered",
 		},
 	}, nil
+}
+
+func (s *AuthController) ValidateToken(ctx context.Context, req *pb.ValidateTokenRequest) (*pb.ValidateTokenResponse, error){
+	valid,err:=s.service.ValidateToken(req.Token)
+	if err!=nil{
+		return &pb.ValidateTokenResponse{
+			Valid: valid,
+			Response: &pb.Response{
+				Code: http.StatusInternalServerError,
+				Message: fmt.Sprintf("error in validating token : ",err),
+			},
+		},nil
+	}
+	if valid == false{
+		return &pb.ValidateTokenResponse{
+			Valid: valid,
+			Response: &pb.Response{
+				Code: http.StatusUnauthorized,
+				Message: fmt.Sprintf("invalid token"),
+			},
+		},nil
+	}
+
+	return &pb.ValidateTokenResponse{
+		Valid: valid,
+		Response: &pb.Response{
+			Code: http.StatusOK,
+			Message: fmt.Sprintf("valid token"),
+		},
+	},nil
 }

@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/tanmaygupta069/auth-service-go/config"
@@ -24,6 +23,7 @@ type AuthService interface {
 	RegisterUser(email string, password string) error
 	CheckPassword(password string, hashedPassword string) bool
 	GetHashedPassword(email string) (string, error)
+	ValidateToken(token string)(bool,error)
 }
 
 type AuthServiceImp struct {
@@ -69,27 +69,18 @@ func (r *AuthServiceImp) GetHashedPassword(email string) (string, error) {
 	return hashedPassword, nil
 }
 
-func GenerateToken(email string) (string, error) {
-	expirationTime := time.Now().Add(time.Hour)
-	claims := &Claims{
-		Email: email,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
-}
-
-func ValidateToken(tokenString string) (*Claims, error) {
-	claims := &Claims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+func (r *AuthServiceImp)ValidateToken(tokenString string) (bool, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return jwtSecret, nil
 	})
 
 	if err != nil || !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return false,nil
 	}
 
-	return claims, nil
+	return true, nil
 }
+

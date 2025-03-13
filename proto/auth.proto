@@ -34,7 +34,8 @@ message ValidateTokenRequest{
 }
 
 message ValidateTokenResponse{
-    bool res = 1;
+    bool valid = 1;
+    Response response = 2;
 }
 
 message Response {
