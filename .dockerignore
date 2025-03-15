@@ -1,0 +1,28 @@
+# Ignore the Go build artifacts
+/bin/
+/pkg/
+/build/
+*.exe
+*.out
+
+# Ignore Go dependencies
+vendor/
+go.sum
+go.mod~
+
+# Ignore Git repository files
+.git/
+.gitignore
+
+# Ignore logs and temp files
+*.log
+*.swp
+*.swo
+*.tmp
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore environment files (security measure)
+.env

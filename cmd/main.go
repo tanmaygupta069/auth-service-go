@@ -20,7 +20,7 @@ func main() {
 	// router:=router.GetRouter()
 	// router.Run(":"+cfg.ServerConfig.Port)
 	sayHelloController := auth.NewAuthController()
-	// _, err := credentials.NewServerTLSFromFile("cert.pem", "key.pem")
+	// _, err = credentials.NewServerTLSFromFile("cert.pem", "key.pem")
 	if err != nil {
 		log.Fatalf("Failed to load TLS keys: %v", err)
 	}
