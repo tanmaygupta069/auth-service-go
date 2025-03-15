@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	pb "github.com/tanmaygupta069/auth-service-go/generated"
-	"github.com/tanmaygupta069/auth-service-go/pkg/auth"
+	"github.com/tanmaygupta069/auth-service-go/internal/pkg/auth"
 )
 
 type AuthController struct {

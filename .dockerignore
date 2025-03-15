@@ -7,8 +7,6 @@
 
 # Ignore Go dependencies
 vendor/
-go.sum
-go.mod~
 
 # Ignore Git repository files
 .git/
@@ -25,4 +23,4 @@ Dockerfile
 docker-compose.yml
 
 # Ignore environment files (security measure)
-.env
+# .env

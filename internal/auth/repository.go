@@ -1,7 +1,7 @@
 package auth
 
 import (
-	sql "github.com/tanmaygupta069/auth-service-go/pkg/mysql"
+	sql "github.com/tanmaygupta069/auth-service-go/internal/pkg/mysql"
 )
 
 type RepositoryInterface interface {

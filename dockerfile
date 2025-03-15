@@ -1,13 +1,31 @@
-# Use a lightweight Go image
+# Use the official Golang image
 FROM golang:1.24.1 as builder
 
+# Set the working directory inside the container
 WORKDIR /app
-COPY . .
-RUN go mod tidy
-RUN go build -o auth-service
 
-# Use a minimal image for the final container
-FROM alpine:latest
+# Copy go.mod and go.sum files first for caching dependencies
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy the rest of the application code
+COPY . .
+
+COPY .env .env
+
+# Move to the cmd directory to build the app
+WORKDIR /app/cmd
+
+# ✅ Fix build command
+RUN go build -o main .
+
+# Set working directory back to /app/cmd to run the binary
 WORKDIR /app
-COPY --from=builder /app/auth-service .
-CMD ["./auth-service"]
+
+# Expose the application port
+EXPOSE 8081
+
+# ✅ Fix execution path
+CMD ["./cmd/main"]
